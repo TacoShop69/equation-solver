@@ -3,6 +3,7 @@ from backend import cramer
 
 st.set_page_config(page_title="Equation System Solver")
 st.title("Equation System Solver for 3 unknowns")
+st.caption("Each row is:  A·x + B·y + C·z = D")
 
 CAMPOS = [f"{col}{fila}" for fila in (1, 2, 3) for col in "ABCD"]
 
@@ -41,25 +42,15 @@ def clear():
     st.session_state["resultado"] = None
 
 
-# Input grid: box, label, box, label, box, label, box
-ANCHOS = [3, 1, 3, 1, 3, 1, 3]
-ETIQUETAS = ("x +", "y +", "z =")
-
+# Input grid (3 rows x 4 columns)
 for fila in (1, 2, 3):
-    cols = st.columns(ANCHOS, vertical_alignment="center")
-
-    for pos, letra in zip((0, 2, 4, 6), "ABCD"):
-        cols[pos].text_input(
+    columnas = st.columns(4)
+    for columna, letra in zip(columnas, "ABCD"):
+        columna.text_input(
             f"{letra}{fila}",
             key=f"{letra}{fila}",
             placeholder=f"{letra}{fila}",
             label_visibility="collapsed",
-        )
-
-    for pos, texto in zip((1, 3, 5), ETIQUETAS):
-        cols[pos].markdown(
-            f"<div style='text-align:center'>{texto}</div>",
-            unsafe_allow_html=True,
         )
 
 # Buttons
