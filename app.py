@@ -90,8 +90,10 @@ if res is not None:
     nombres = ("Δ", "Δx", "Δy", "Δz")
     valores = (res["Det"], res["Dx"], res["Dy"], res["Dz"])
     for columna, nombre, valor in zip(columnas, nombres, valores):
-        columna.metric(nombre, fmt(valor))
-
+        columna.markdown(
+            f"<small>{nombre}</small><br><span style='font-size:2rem'>{fmt(valor)}</span>",
+            unsafe_allow_html=True,
+        )
     if res["solucion"] is not None:
         st.subheader("Solution")
         for nombre, numerador, valor in zip(

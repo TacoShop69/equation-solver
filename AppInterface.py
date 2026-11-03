@@ -112,9 +112,23 @@ def clear():
 app = customtkinter.CTk()
 
 app.title("Equation System Solver for 3 unknowns")
-ruta_icono = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
+app = customtkinter.CTk()
+
+app.title("Equation System Solver for 3 unknowns")
+
 base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 ruta_icono = os.path.join(base, "icon.ico")
+
+
+def poner_icono():
+    try:
+        app.iconbitmap(ruta_icono)
+    except Exception as e:
+        print("Icon error:", e, "| path:", ruta_icono)
+
+
+app.after(500, poner_icono)
+
 app.geometry("500x650")
 app.resizable(False, False)
 
