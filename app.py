@@ -80,11 +80,11 @@ if st.session_state["error"]:
 
 res = st.session_state["resultado"]
 if res is not None:
-    st.subheader("Sistema ingresado")
+    st.subheader("Entered System")
     for fila, valor in zip(res["matriz"], res["d"]):
         st.write(ecuacion(fila, valor))
 
-    st.subheader("Determinantes")
+    st.subheader("Determinants")
     columnas = st.columns(4)
     nombres = ("Δ", "Δx", "Δy", "Δz")
     valores = (res["Det"], res["Dx"], res["Dy"], res["Dz"])
@@ -92,7 +92,7 @@ if res is not None:
         columna.metric(nombre, fmt(valor))
 
     if res["solucion"] is not None:
-        st.subheader("Solución")
+        st.subheader("Solution")
         for nombre, numerador, valor in zip(
             "xyz", (res["Dx"], res["Dy"], res["Dz"]), res["solucion"]
         ):

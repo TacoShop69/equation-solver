@@ -256,7 +256,7 @@ panel.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
 # Sistema ingresado
 customtkinter.CTkLabel(
-    panel, text="Sistema ingresado", font=("Arial", 16, "bold")
+    panel, text="Entered System", font=("Arial", 16, "bold")
 ).grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 4))
 
 eq_labels = []
@@ -267,7 +267,7 @@ for i in range(3):
 
 # Determinantes
 customtkinter.CTkLabel(
-    panel, text="Determinantes", font=("Arial", 16, "bold")
+    panel, text="Determinants", font=("Arial", 16, "bold")
 ).grid(row=4, column=0, columnspan=4, sticky="w", pady=(10, 4))
 
 det_valores = []
@@ -283,7 +283,7 @@ for col, nombre in enumerate(("Δ", "Δx", "Δy", "Δz")):
 
 # Solución
 customtkinter.CTkLabel(
-    panel, text="Solución", font=("Arial", 16, "bold")
+    panel, text="Solution", font=("Arial", 16, "bold")
 ).grid(row=7, column=0, columnspan=4, sticky="w", pady=(10, 4))
 
 sol_labels = []
