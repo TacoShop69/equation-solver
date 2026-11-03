@@ -1,10 +1,10 @@
 import customtkinter
 import os
+import sys
 from backend import cramer
 
 VERDE_FONDO = "#14532d"
 VERDE_TEXTO = "#4ade80"
-
 
 def fmt(n):
     """Entero si es entero; si no, redondeado a 4 decimales."""
@@ -113,7 +113,8 @@ app = customtkinter.CTk()
 
 app.title("Equation System Solver for 3 unknowns")
 ruta_icono = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
-app.after(200, lambda: app.iconbitmap(ruta_icono))
+base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+ruta_icono = os.path.join(base, "icon.ico")
 app.geometry("500x650")
 app.resizable(False, False)
 
