@@ -1,7 +1,8 @@
 import streamlit as st
+from PIL import Image
 from backend import cramer
 
-st.set_page_config(page_title="Equation System Solver")
+st.set_page_config(page_title="Equation System Solver", page_icon=Image.open("icon.ico"))
 st.title("Equation System Solver for 3 unknowns")
 st.caption("Each row is:  A·x + B·y + C·z = D")
 
