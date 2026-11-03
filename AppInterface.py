@@ -1,24 +1,38 @@
 import customtkinter
 from backend import cramer
 
+VERDE_FONDO = "#14532d"
+VERDE_TEXTO = "#4ade80"
+
+
+def fmt(n):
+    """Entero si es entero; si no, redondeado a 4 decimales."""
+    n = round(n, 4)
+    if n == int(n):
+        return str(int(n))
+    return str(n)
+
+
+def ecuacion(fila, d):
+    a, b, c = fila
+    return f"{fmt(a)}x + {fmt(b)}y + {fmt(c)}z = {fmt(d)}"
+
+
+def limpiar_panel():
+    for lbl in eq_labels:
+        lbl.configure(text="")
+    for lbl in det_valores:
+        lbl.configure(text="___")
+    for lbl in sol_labels:
+        lbl.configure(text="", fg_color="transparent")
+
 
 def mostrar_error(mensaje):
     error_label.configure(text=mensaje)
     resultado_x.configure(text="X = ___")
     resultado_y.configure(text="Y = ___")
     resultado_z.configure(text="Z = ___")
-    limpiar_determinantes()
-
-
-def limpiar_determinantes():
-    det_label.configure(text="Δ = ___")
-    det_x_label.configure(text="Δx = ___")
-    det_y_label.configure(text="Δy = ___")
-    det_z_label.configure(text="Δz = ___")
-
-
-def formato(n):
-    return str(round(n, 4))
+    limpiar_panel()
 
 
 def solve():
@@ -42,23 +56,35 @@ def solve():
 
     Det, Dx, Dy, Dz, solucion = cramer(matriz,d)
 
-    det_label.configure(text="Δ = " + formato(Det))
-    det_x_label.configure(text="Δx = " + formato(Dx))
-    det_y_label.configure(text="Δy = " + formato(Dy))
-    det_z_label.configure(text="Δz = " + formato(Dz))
+    # Sistema ingresado
+    for lbl, fila, valor in zip(eq_labels, matriz, d):
+        lbl.configure(text=ecuacion(fila, valor))
+
+    # Determinantes
+    for lbl, valor in zip(det_valores, (Det, Dx, Dy, Dz)):
+        lbl.configure(text=fmt(valor))
 
     if solucion is None:
         error_label.configure(text="No unique solution (determinant is 0)")
         resultado_x.configure(text="X = ___")
         resultado_y.configure(text="Y = ___")
         resultado_z.configure(text="Z = ___")
+        for lbl in sol_labels:
+            lbl.configure(text="", fg_color="transparent")
         return
 
     x,y,z = solucion
 
-    resultado_x.configure(text="X = " + str(round(x, 4)))
-    resultado_y.configure(text="Y = " + str(round(y, 4)))
-    resultado_z.configure(text="Z = " + str(round(z, 4)))
+    resultado_x.configure(text="X = " + fmt(x))
+    resultado_y.configure(text="Y = " + fmt(y))
+    resultado_z.configure(text="Z = " + fmt(z))
+
+    # Solución paso a paso
+    for lbl, nombre, num, valor in zip(sol_labels, "xyz", (Dx, Dy, Dz), solucion):
+        lbl.configure(
+            text=f"  {nombre} = {fmt(num)} / {fmt(Det)} = {fmt(valor)}",
+            fg_color=VERDE_FONDO
+        )
 
 
 def clear():
@@ -73,7 +99,7 @@ def clear():
     resultado_x.configure(text="X = ___")
     resultado_y.configure(text="Y = ___")
     resultado_z.configure(text="Z = ___")
-    limpiar_determinantes()
+    limpiar_panel()
 
     app.focus_set()   # take focus away from any entry
     app.update()      # let Tk process the FocusOut event
@@ -85,7 +111,7 @@ def clear():
 app = customtkinter.CTk()
 
 app.title("Equation System Solver for 3 unknowns")
-app.geometry("500x330")
+app.geometry("500x650")
 app.resizable(False, False)
 
 # Columnas laterales para centrar horizontalmente
@@ -222,22 +248,58 @@ resultado_z = customtkinter.CTkLabel(
 resultado_z.grid(row=3, column=9, padx=10)
 
 
-# DETERMINANTES
+# PANEL DE RESULTADOS
 
-determinantes = customtkinter.CTkFrame(app, fg_color="transparent")
-determinantes.grid(row=6, column=1, columnspan=9, pady=(10, 0))
+panel = customtkinter.CTkFrame(app, fg_color="transparent")
+panel.grid(row=6, column=1, columnspan=9, sticky="we", padx=20, pady=(10, 15))
+panel.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
-det_label = customtkinter.CTkLabel(determinantes, text="Δ = ___", font=("Arial", 14, "bold"))
-det_label.grid(row=0, column=0, padx=12)
+# Sistema ingresado
+customtkinter.CTkLabel(
+    panel, text="Sistema ingresado", font=("Arial", 16, "bold")
+).grid(row=0, column=0, columnspan=4, sticky="w", pady=(0, 4))
 
-det_x_label = customtkinter.CTkLabel(determinantes, text="Δx = ___", font=("Arial", 14, "bold"))
-det_x_label.grid(row=0, column=1, padx=12)
+eq_labels = []
+for i in range(3):
+    lbl = customtkinter.CTkLabel(panel, text="", font=("Arial", 12), anchor="w")
+    lbl.grid(row=1 + i, column=0, columnspan=4, sticky="w")
+    eq_labels.append(lbl)
 
-det_y_label = customtkinter.CTkLabel(determinantes, text="Δy = ___", font=("Arial", 14, "bold"))
-det_y_label.grid(row=0, column=2, padx=12)
+# Determinantes
+customtkinter.CTkLabel(
+    panel, text="Determinantes", font=("Arial", 16, "bold")
+).grid(row=4, column=0, columnspan=4, sticky="w", pady=(10, 4))
 
-det_z_label = customtkinter.CTkLabel(determinantes, text="Δz = ___", font=("Arial", 14, "bold"))
-det_z_label.grid(row=0, column=3, padx=12)
+det_valores = []
+for col, nombre in enumerate(("Δ", "Δx", "Δy", "Δz")):
+    customtkinter.CTkLabel(
+        panel, text=nombre, font=("Arial", 11), anchor="w"
+    ).grid(row=5, column=col, sticky="w")
+    valor_label = customtkinter.CTkLabel(
+        panel, text="___", font=("Arial", 22), anchor="w"
+    )
+    valor_label.grid(row=6, column=col, sticky="w")
+    det_valores.append(valor_label)
+
+# Solución
+customtkinter.CTkLabel(
+    panel, text="Solución", font=("Arial", 16, "bold")
+).grid(row=7, column=0, columnspan=4, sticky="w", pady=(10, 4))
+
+sol_labels = []
+for i in range(3):
+    lbl = customtkinter.CTkLabel(
+        panel,
+        text="",
+        font=("Arial", 12),
+        anchor="w",
+        text_color=VERDE_TEXTO,
+        fg_color="transparent",
+        corner_radius=6,
+        height=30
+    )
+    lbl.grid(row=8 + i, column=0, columnspan=4, sticky="we", pady=2)
+    sol_labels.append(lbl)
 
 
 app.mainloop()

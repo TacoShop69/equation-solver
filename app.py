@@ -11,6 +11,19 @@ st.session_state.setdefault("error", "")
 st.session_state.setdefault("resultado", None)
 
 
+def fmt(n):
+    """Entero si es entero; si no, redondeado a 4 decimales."""
+    n = round(n, 4)
+    if n == int(n):
+        return str(int(n))
+    return str(n)
+
+
+def ecuacion(fila, d):
+    a, b, c = fila
+    return f"{fmt(a)}x + {fmt(b)}y + {fmt(c)}z = {fmt(d)}"
+
+
 def solve():
     st.session_state["error"] = ""
     st.session_state["resultado"] = None
@@ -30,7 +43,8 @@ def solve():
     Det, Dx, Dy, Dz, solucion = cramer(matriz, d)
 
     st.session_state["resultado"] = {
-        "Det": Det, "Dx": Dx, "Dy": Dy, "Dz": Dz, "solucion": solucion
+        "Det": Det, "Dx": Dx, "Dy": Dy, "Dz": Dz, "solucion": solucion,
+        "matriz": matriz, "d": d
     }
 
     if solucion is None:
@@ -66,13 +80,20 @@ if st.session_state["error"]:
 
 res = st.session_state["resultado"]
 if res is not None:
-    if res["solucion"] is not None:
-        x, y, z = res["solucion"]
-        st.success(f"X = {round(x, 4)}   |   Y = {round(y, 4)}   |   Z = {round(z, 4)}")
+    st.subheader("Sistema ingresado")
+    for fila, valor in zip(res["matriz"], res["d"]):
+        st.write(ecuacion(fila, valor))
 
-    st.info(
-        f"Δ = {round(res['Det'], 4)}   |   "
-        f"Δx = {round(res['Dx'], 4)}   |   "
-        f"Δy = {round(res['Dy'], 4)}   |   "
-        f"Δz = {round(res['Dz'], 4)}"
-    )
+    st.subheader("Determinantes")
+    columnas = st.columns(4)
+    nombres = ("Δ", "Δx", "Δy", "Δz")
+    valores = (res["Det"], res["Dx"], res["Dy"], res["Dz"])
+    for columna, nombre, valor in zip(columnas, nombres, valores):
+        columna.metric(nombre, fmt(valor))
+
+    if res["solucion"] is not None:
+        st.subheader("Solución")
+        for nombre, numerador, valor in zip(
+            "xyz", (res["Dx"], res["Dy"], res["Dz"]), res["solucion"]
+        ):
+            st.success(f"{nombre} = {fmt(numerador)} / {fmt(res['Det'])} = {fmt(valor)}")
