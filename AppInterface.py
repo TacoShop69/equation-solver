@@ -7,6 +7,18 @@ def mostrar_error(mensaje):
     resultado_x.configure(text="X = ___")
     resultado_y.configure(text="Y = ___")
     resultado_z.configure(text="Z = ___")
+    limpiar_determinantes()
+
+
+def limpiar_determinantes():
+    det_label.configure(text="Δ = ___")
+    det_x_label.configure(text="Δx = ___")
+    det_y_label.configure(text="Δy = ___")
+    det_z_label.configure(text="Δz = ___")
+
+
+def formato(n):
+    return str(round(n, 4))
 
 
 def solve():
@@ -28,13 +40,21 @@ def solve():
         mostrar_error("Enter a valid number in every field")
         return
 
-    resultado = cramer(matriz,d)
+    Det, Dx, Dy, Dz, solucion = cramer(matriz,d)
 
-    if resultado is None:
-        mostrar_error("No unique solution (determinant is 0)")
+    det_label.configure(text="Δ = " + formato(Det))
+    det_x_label.configure(text="Δx = " + formato(Dx))
+    det_y_label.configure(text="Δy = " + formato(Dy))
+    det_z_label.configure(text="Δz = " + formato(Dz))
+
+    if solucion is None:
+        error_label.configure(text="No unique solution (determinant is 0)")
+        resultado_x.configure(text="X = ___")
+        resultado_y.configure(text="Y = ___")
+        resultado_z.configure(text="Z = ___")
         return
 
-    x,y,z = resultado
+    x,y,z = solucion
 
     resultado_x.configure(text="X = " + str(round(x, 4)))
     resultado_y.configure(text="Y = " + str(round(y, 4)))
@@ -53,6 +73,7 @@ def clear():
     resultado_x.configure(text="X = ___")
     resultado_y.configure(text="Y = ___")
     resultado_z.configure(text="Z = ___")
+    limpiar_determinantes()
 
     app.focus_set()   # take focus away from any entry
     app.update()      # let Tk process the FocusOut event
@@ -64,7 +85,7 @@ def clear():
 app = customtkinter.CTk()
 
 app.title("Equation System Solver for 3 unknowns")
-app.geometry("500x260")
+app.geometry("500x330")
 app.resizable(False, False)
 
 # Columnas laterales para centrar horizontalmente
@@ -199,6 +220,24 @@ resultado_z = customtkinter.CTkLabel(
 )
 
 resultado_z.grid(row=3, column=9, padx=10)
+
+
+# DETERMINANTES
+
+determinantes = customtkinter.CTkFrame(app, fg_color="transparent")
+determinantes.grid(row=6, column=1, columnspan=9, pady=(10, 0))
+
+det_label = customtkinter.CTkLabel(determinantes, text="Δ = ___", font=("Arial", 14, "bold"))
+det_label.grid(row=0, column=0, padx=12)
+
+det_x_label = customtkinter.CTkLabel(determinantes, text="Δx = ___", font=("Arial", 14, "bold"))
+det_x_label.grid(row=0, column=1, padx=12)
+
+det_y_label = customtkinter.CTkLabel(determinantes, text="Δy = ___", font=("Arial", 14, "bold"))
+det_y_label.grid(row=0, column=2, padx=12)
+
+det_z_label = customtkinter.CTkLabel(determinantes, text="Δz = ___", font=("Arial", 14, "bold"))
+det_z_label.grid(row=0, column=3, padx=12)
 
 
 app.mainloop()

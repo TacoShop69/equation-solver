@@ -31,10 +31,10 @@ def cramer(matriz, d):
     Dz = determinante(matrizz)
 
     if Det == 0:
-        return None
+        return Det, Dx, Dy, Dz, None
 
     x = Dx / Det
     y = Dy / Det
     z = Dz / Det
 
-    return x,y,z
+    return Det, Dx, Dy, Dz, (x, y, z)

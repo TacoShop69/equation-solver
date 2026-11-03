@@ -27,12 +27,14 @@ def solve():
     matriz = [[valores[f"{c}{i}"] for c in "ABC"] for i in (1, 2, 3)]
     d = [valores[f"D{i}"] for i in (1, 2, 3)]
 
-    resultado = cramer(matriz, d)
+    Det, Dx, Dy, Dz, solucion = cramer(matriz, d)
 
-    if resultado is None:
+    st.session_state["resultado"] = {
+        "Det": Det, "Dx": Dx, "Dy": Dy, "Dz": Dz, "solucion": solucion
+    }
+
+    if solucion is None:
         st.session_state["error"] = "No unique solution (determinant is 0)"
-    else:
-        st.session_state["resultado"] = resultado
 
 
 def clear():
@@ -61,6 +63,16 @@ b2.button("Clear", on_click=clear)
 # Messages and results
 if st.session_state["error"]:
     st.error(st.session_state["error"])
-elif st.session_state["resultado"] is not None:
-    x, y, z = st.session_state["resultado"]
-    st.success(f"X = {round(x, 4)}   |   Y = {round(y, 4)}   |   Z = {round(z, 4)}")
+
+res = st.session_state["resultado"]
+if res is not None:
+    if res["solucion"] is not None:
+        x, y, z = res["solucion"]
+        st.success(f"X = {round(x, 4)}   |   Y = {round(y, 4)}   |   Z = {round(z, 4)}")
+
+    st.info(
+        f"Δ = {round(res['Det'], 4)}   |   "
+        f"Δx = {round(res['Dx'], 4)}   |   "
+        f"Δy = {round(res['Dy'], 4)}   |   "
+        f"Δz = {round(res['Dz'], 4)}"
+    )
