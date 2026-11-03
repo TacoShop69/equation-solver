@@ -1,4 +1,5 @@
 import customtkinter
+import os
 from backend import cramer
 
 VERDE_FONDO = "#14532d"
@@ -111,6 +112,8 @@ def clear():
 app = customtkinter.CTk()
 
 app.title("Equation System Solver for 3 unknowns")
+ruta_icono = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon.ico")
+app.after(200, lambda: app.iconbitmap(ruta_icono))
 app.geometry("500x650")
 app.resizable(False, False)
 
